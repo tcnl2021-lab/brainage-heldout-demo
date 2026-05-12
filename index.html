@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brain-age held-out validation — TCNL Lab</title>
+<style>
+  :root {
+    --ink: #1d2530;
+    --fade: #5b6470;
+    --card: #f7f7f3;
+    --accent: #5a6c80;
+    --rule: #dcdcd6;
+    --hover: #eef2f6;
+    --good: #6ea88a;
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+                 "Helvetica Neue", Arial, sans-serif;
+    color: var(--ink);
+    max-width: 780px;
+    margin: 3rem auto 6rem;
+    padding: 0 1.4rem;
+    line-height: 1.55;
+    background: #fcfcfa;
+  }
+  h1 { font-size: 1.85rem; margin: 0 0 0.25rem; letter-spacing: -0.01em; }
+  h2 { font-size: 1.1rem; margin: 2.2rem 0 0.6rem; letter-spacing: -0.005em; }
+  .tag {
+    display: inline-block; font-size: 0.72rem;
+    background: var(--accent); color: white;
+    padding: 2px 7px; border-radius: 3px;
+    letter-spacing: 0.02em; margin-bottom: 0.55rem;
+  }
+  .subtitle { color: var(--fade); font-size: 0.96rem; margin: 0 0 2rem; }
+
+  .metrics {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.7rem;
+    margin: 1.4rem 0;
+  }
+  .metric {
+    background: var(--card); border: 1px solid var(--rule);
+    border-radius: 8px; padding: 0.85rem 1rem;
+  }
+  .metric .label {
+    font-size: 0.72rem; color: var(--fade); text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .metric .value {
+    font-size: 1.4rem; font-weight: 600; margin-top: 0.15rem;
+    font-variant-numeric: tabular-nums;
+  }
+  .metric .sub { font-size: 0.78rem; color: var(--fade); margin-top: 0.1rem; }
+
+  .cta {
+    display: inline-block; background: var(--accent); color: white;
+    padding: 0.65rem 1.15rem; border-radius: 6px;
+    text-decoration: none; font-size: 0.95rem; font-weight: 500;
+    margin-top: 0.4rem;
+    transition: background 0.15s, transform 0.15s;
+  }
+  .cta:hover { background: #475765; transform: translateY(-1px); }
+  .cta .arrow { margin-left: 0.4rem; }
+
+  p { margin: 0.6rem 0; }
+  ul { padding-left: 1.2rem; }
+  li { margin: 0.25rem 0; }
+  code { background: var(--card); padding: 1px 5px; border-radius: 3px;
+         font-size: 0.88em; }
+  a { color: #356ea6; }
+
+  footer {
+    margin-top: 3rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--rule);
+    font-size: 0.82rem;
+    color: var(--fade);
+  }
+
+  .badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 0.78rem; color: #4a5663;
+    background: #eef1ee; border: 1px solid var(--rule);
+    padding: 3px 10px; border-radius: 999px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-variant-numeric: tabular-nums;
+  }
+  .badge::before {
+    content: ""; width: 6px; height: 6px;
+    border-radius: 50%; background: var(--good); display: inline-block;
+  }
+</style>
+</head>
+<body>
+
+<span class="tag">Held-out validation</span>
+<h1>Multimodal brain-age — independent held-out test</h1>
+<p class="subtitle">
+  Frozen 80/20 age × sex stratified split on the TCNL Quanta cohort
+  (n=427). Six modality blocks × five base learners → RidgeCV meta.
+</p>
+
+<div class="metrics">
+  <div class="metric">
+    <div class="label">Train-CV MAE</div>
+    <div class="value">2.85 yr</div>
+    <div class="sub">± 0.19 across 5 folds</div>
+  </div>
+  <div class="metric">
+    <div class="label">Held-out MAE</div>
+    <div class="value">3.04 yr</div>
+    <div class="sub">n = 86 unseen subjects</div>
+  </div>
+  <div class="metric">
+    <div class="label">Held-out R²</div>
+    <div class="value">0.960</div>
+  </div>
+  <div class="metric">
+    <div class="label">Held-out Pearson r</div>
+    <div class="value">0.980</div>
+  </div>
+</div>
+
+<p>
+  <!-- TODO: replace the href below with the actual Streamlit Cloud URL after deploying. -->
+  <a class="cta" href="https://tcnl2021-lab-brainage-heldout-demo.streamlit.app/">
+    Launch interactive demo<span class="arrow">→</span>
+  </a>
+  <span class="badge" style="margin-left:0.6rem">deployed on Streamlit Cloud</span>
+</p>
+
+<h2>What this is</h2>
+<p>
+  An independent end-of-pipeline check that the Quanta multimodal brain-age
+  stack generalises to held-out subjects from the same cohort. The 86-subject
+  test set is fully disjoint from the 341 training subjects, and auxiliary
+  out-of-fold scalar predictors (DTI ROI / DTI voxel ridge / rs-fMRI FC) were
+  regenerated under the frozen split so no test labels reach the held-out rows.
+</p>
+
+<h2>Cohort & model</h2>
+<ul>
+  <li><strong>Cohort.</strong> 427 healthy adults, age 19–80, TCNL Quanta multimodal ageing study.</li>
+  <li><strong>Modalities.</strong> behaviour · EEG · T1-w MRI morphometry · DTI ROI + voxel ·
+      compositional features · rs-fMRI Schaefer-400 FC · deep features (SFCN, Pyment).</li>
+  <li><strong>Stack.</strong> per-modality Ridge / KRR-RBF / LGBM-L2 / SVR-RBF / LGBM-quantile
+      base learners feeding a RidgeCV meta-learner with a residual Ridge correction.</li>
+  <li><strong>Split.</strong> 341 train / 86 held-out, age × sex stratified, frozen before
+      the final run.</li>
+</ul>
+
+<h2>What the demo shows</h2>
+<ul>
+  <li>Predicted vs true age scatter (train CV OOF + held-out test points overlaid).</li>
+  <li>Five-fold inner CV metrics with held-out baseline overlay.</li>
+  <li>Modality-block ablation: Δ test MAE when each block is removed, plus each block alone.</li>
+</ul>
+
+<footer>
+  Source: <a href="https://github.com/tcnl2021-lab/brainage-heldout-demo"><code>tcnl2021-lab/brainage-heldout-demo</code></a>.
+  Distinctness audit and full pipeline live in the internal <code>Quanta_heldout</code> repo.
+  No raw subject features ship with this demo — only de-identified position-indexed
+  prediction vectors and aggregated summaries.
+</footer>
+
+</body>
+</html>
